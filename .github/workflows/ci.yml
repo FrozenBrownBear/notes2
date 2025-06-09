@@ -18,14 +18,16 @@ jobs:
           toolchain: stable
           override: true
       - name: Build GUI
-        run: cargo build --release --bin gui
+        run: cargo build --release -p ui_iced
       - name: Build TUI
-        run: cargo build --release --bin tui
+        run: cargo build --release -p tui_editor
+      - name: Run tests
+        run: cargo test --workspace
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: notes2-${{ matrix.os }}
           path: |
-            target/release/gui*
-            target/release/tui*
+            target/release/ui_iced*
+            target/release/tui_editor*
 
