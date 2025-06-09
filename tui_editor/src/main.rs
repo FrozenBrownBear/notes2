@@ -10,15 +10,34 @@ use ratatui::widgets::{Block, Borders, Paragraph};
 use ratatui::text::{Span, Line};
 use tui_textarea::{Input, Key, TextArea};
 use serde::{Deserialize, Serialize};
+use crate::sidebar::{Sidebar, FileExplorer};
+
+struct LocalBus;
+
+impl core_notes::events::EventSink for LocalBus {
+    fn send(&self, _msg: core_notes::events::Message) {}
+}
+
+struct DummyExplorer;
+
+impl FileExplorer for DummyExplorer {
+    fn go_home(&mut self) {}
+    fn new_note(&mut self) {}
+    fn search(&mut self) {}
+    fn go_back(&mut self) {}
+    fn settings(&mut self) {}
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Config {
     theme: String,
+    #[serde(default)]
+    auto_fold_ms: Option<u64>,
 }
 
 impl Default for Config {
     fn default() -> Self {
-        Self { theme: "light".into() }
+        Self { theme: "light".into(), auto_fold_ms: None }
     }
 }
 
@@ -70,6 +89,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut palette = TextArea::default();
     palette.set_block(Block::default().borders(Borders::ALL).title("Settings"));
 
+    let mut sidebar = Sidebar::new(cfg.auto_fold_ms);
+    let bus = LocalBus;
+    let mut explorer = DummyExplorer;
+
     if Path::new("config.yaml").exists() {
         if let Ok(content) = fs::read_to_string("config.yaml") {
             palette.insert_str(&content);
@@ -79,6 +102,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     loop {
+        sidebar.tick();
         terminal.draw(|f| {
             let size = f.size();
             if show_palette {
@@ -86,11 +110,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let widget = palette.widget();
                 f.render_widget(widget, area);
             } else {
+                let sidebar_width = if sidebar.open { 20 } else { 0 };
+                let constraints = [
+                    Constraint::Length(sidebar_width),
+                    Constraint::Percentage(50),
+                    Constraint::Percentage(50),
+                ];
                 let chunks = Layout::default()
                     .direction(Direction::Horizontal)
-                    .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
+                    .constraints(constraints)
                     .split(size);
-                f.render_widget(editor.widget(), chunks[0]);
+                if sidebar.open {
+                    f.render_widget(sidebar.view(), chunks[0]);
+                }
+                f.render_widget(editor.widget(), chunks[1]);
 
                 let lines: Vec<Line> = editor
                     .lines()
@@ -105,7 +138,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .collect();
                 let preview = Paragraph::new(lines)
                     .block(Block::default().borders(Borders::ALL).title("Preview"));
-                f.render_widget(preview, chunks[1]);
+                f.render_widget(preview, chunks[2]);
             }
         })?;
 
@@ -124,6 +157,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                             _ => { let _ = palette.input(to_input(key)); },
                         }
                     } else {
+                        sidebar.handle_event(&Event::Key(key), &bus, &mut explorer);
                         match key.code {
                             KeyCode::Char('q') if key.modifiers.contains(KeyModifiers::CONTROL) => break,
                             KeyCode::Char('p') if key.modifiers.is_empty() => {
