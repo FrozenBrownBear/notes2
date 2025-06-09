@@ -6,11 +6,7 @@ edition = "2024"
 [dependencies]
 regex = "1"
 [workspace]
-members = [
-    "tools/create_note",
-]
 resolver = "2"
-members = ["markdown_renderer"]
 members = [
     "core",
     "config",
