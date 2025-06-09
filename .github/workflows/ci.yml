@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Build GUI
+        run: cargo build --release --bin gui
+      - name: Build TUI
+        run: cargo build --release --bin tui
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: notes2-${{ matrix.os }}
+          path: |
+            target/release/gui*
+            target/release/tui*
+
