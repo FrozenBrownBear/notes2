@@ -29,4 +29,23 @@ pub fn load_settings(path: &Path) -> Result<Settings, Error> {
     let settings: Settings = serde_yaml::from_str(yaml)?;
     Ok(settings)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Write;
+    use tempfile::NamedTempFile;
+
+    #[test]
+    fn parses_front_matter_yaml() {
+        let mut file = NamedTempFile::new().unwrap();
+        writeln!(
+            file,
+            "---\nsidebar_auto_fold_ms: 42\n---\nbody"
+        )
+        .unwrap();
+        let settings = load_settings(file.path()).unwrap();
+        assert_eq!(settings.sidebar_auto_fold_ms, Some(42));
+    }
+}
 pub fn placeholder() {}

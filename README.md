@@ -8,9 +8,9 @@ provides both a graphical user interface (GUI) and a terminal user interface
 
 The repository is structured as a Cargo workspace with multiple crates:
 
-- `gui/` &ndash; Rust crate for the desktop GUI
-- `tui/` &ndash; Rust crate for the terminal UI
-- `common/` &ndash; code shared between frontends
+ - `ui_iced/` &ndash; Rust crate for the desktop GUI
+ - `tui_editor/` &ndash; Rust crate for the terminal UI
+ - `core/` &ndash; code shared between frontends
 - `assets/` &ndash; application icons and other resources
 
 ## Building the project
@@ -24,12 +24,12 @@ cargo build --workspace
 ## Running the GUI
 
 ```bash
-cargo run -p elephant-gui
+cargo run -p ui_iced
 ```
 
 ## Running the TUI
 
 ```bash
-cargo run -p elephant-tui
+cargo run -p tui_editor
 ```
 
