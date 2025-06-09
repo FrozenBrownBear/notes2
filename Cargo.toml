@@ -1,4 +1,5 @@
 [workspace]
+members = ["markdown_renderer"]
 members = [
     "core",
     "config",
