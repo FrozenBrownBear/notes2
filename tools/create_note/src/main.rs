@@ -46,4 +46,4 @@ fn main() -> anyhow::Result<()> {
     println!("Created {:?}", target);
     Ok(())
 }
-
+fn main() {
