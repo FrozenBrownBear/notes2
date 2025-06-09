@@ -1,3 +1,4 @@
+codex/créer-enum-message-et-trait-eventsink
 pub mod events;
 pub mod state;
 
@@ -15,3 +16,6 @@ mod tests {
         assert_eq!(result, 4);
     }
 }
+
+pub fn placeholder() {}
+main
