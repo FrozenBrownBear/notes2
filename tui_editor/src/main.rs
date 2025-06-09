@@ -10,7 +10,7 @@ use ratatui::widgets::{Block, Borders, Paragraph};
 use ratatui::text::{Span, Line};
 use tui_textarea::{Input, Key, TextArea};
 use serde::{Deserialize, Serialize};
-use crate::sidebar::{Sidebar, FileExplorer};
+use tui_editor::sidebar::{Sidebar, FileExplorer};
 
 struct LocalBus;
 
