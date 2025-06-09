@@ -3,9 +3,12 @@ use std::fs;
 use std::path::Path;
 use anyhow::Error;
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 pub struct Settings {
-    // add fields as needed
+    /// Automatically fold the sidebar after this many milliseconds of
+    /// inactivity. A value of `None` disables auto folding.
+    #[serde(default)]
+    pub sidebar_auto_fold_ms: Option<u64>,
 }
 
 /// Load the YAML front matter from the file at `path` into a [`Settings`] struct.
