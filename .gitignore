@@ -1,3 +1,19 @@
+# Compiled files
+/target/
+**/*.rs.bk
+
+# Build artifacts
+**/*.lock
+Cargo.lock
+
+# Misc
+*.log
+
+# Editor directories and files
+**/.idea/
+**/.vscode/
+**/*~
+.DS_Store
 target/
 **/target/
 /target
