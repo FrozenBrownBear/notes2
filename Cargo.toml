@@ -1,0 +1,20 @@
+[workspace]
+members = ["markdown_renderer"]
+members = [
+    "core",
+    "config",
+    "markdown_renderer",
+    "interactive_widgets",
+    "storage",
+    "ui_iced",
+    "tui_editor",
+    "tools/create_note",
+    "launcher"
+]
+
+[workspace.dependencies]
+tokio = "1"
+serde = { version = "1", features = ["derive"] }
+iced = "0.10"
+tui = "0.19"
+pulldown-cmark = "0.10"
