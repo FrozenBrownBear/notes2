@@ -26,3 +26,4 @@ pub fn load_settings(path: &Path) -> Result<Settings, Error> {
     let settings: Settings = serde_yaml::from_str(yaml)?;
     Ok(settings)
 }
+pub fn placeholder() {}
