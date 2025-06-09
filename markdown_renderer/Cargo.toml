@@ -8,8 +8,3 @@ pulldown-cmark = "0.9"
 regex = "1"
 tokio = { version = "1", features = ["fs", "io-util", "macros", "rt"] }
 tempfile = "3"
-name = "$crate"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]

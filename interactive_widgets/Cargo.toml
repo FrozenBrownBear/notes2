@@ -1,5 +1,5 @@
 [package]
-name = "$crate"
+name = "interactive_widgets"
 version = "0.1.0"
 edition = "2021"
 

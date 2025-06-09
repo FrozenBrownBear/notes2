@@ -1,6 +1,5 @@
 [package]
 name = "tui_editor"
-name = "$crate"
 version = "0.1.0"
 edition = "2021"
 
