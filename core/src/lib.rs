@@ -1,7 +1,7 @@
-codex/créer-enum-message-et-trait-eventsink
 pub mod events;
 pub mod state;
 
+/// Simple addition function used for unit tests.
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
@@ -12,10 +12,9 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+        assert_eq!(add(2, 2), 4);
     }
 }
 
+/// Placeholder to avoid empty crate warnings.
 pub fn placeholder() {}
-main
