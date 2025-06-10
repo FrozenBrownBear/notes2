@@ -49,6 +49,14 @@ The workspace includes a `.cargo/config.toml` that enables the
 incremental release mode. Installing `sccache` can greatly reduce build
 times on repeated compilations.
 
+To warm up the build cache locally, you can run:
+
+```bash
+./tools/prepare_build.sh
+```
+
+Pass `--clean` to the script if you need a full rebuild.
+
 ## Pixel art TUI
 
 The terminal interface renders a small "pixel art" sidebar so that the look and
