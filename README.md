@@ -33,3 +33,48 @@ cargo run -p ui_iced
 cargo run -p tui_editor
 ```
 
+## Unified launcher
+
+The `launcher` binary lets you select the interface at runtime:
+
+```bash
+cargo run -p launcher -- --mode gui
+cargo run -p launcher -- --mode tui
+```
+
+## Faster builds
+
+The workspace includes a `.cargo/config.toml` that enables the
+[`sccache`](https://github.com/mozilla/sccache) compiler cache and
+incremental release mode. Installing `sccache` can greatly reduce build
+times on repeated compilations.
+
+To warm up the build cache locally, you can run:
+
+```bash
+./tools/prepare_build.sh
+```
+
+Pass `--clean` to the script if you need a full rebuild.
+
+## Pixel art TUI
+
+The terminal interface renders a small "pixel art" sidebar so that the look and
+feel matches the graphical application. Run it with:
+
+```bash
+cargo run -p tui_editor
+```
+
+## Pre-commit procedure
+
+Before committing changes, run the helper script to format, lint, build and test
+the workspace:
+
+```bash
+./tools/pre_commit.sh
+```
+
+The CI workflow also builds the GUI and TUI crates on Linux, macOS and Windows
+to ensure cross-platform compatibility.
+

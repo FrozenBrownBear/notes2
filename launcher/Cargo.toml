@@ -5,3 +5,5 @@ edition = "2021"
 
 [dependencies]
 ui_iced = { path = "../ui_iced" }
+tui_editor = { path = "../tui_editor" }
+clap = { version = "4", features = ["derive"] }
