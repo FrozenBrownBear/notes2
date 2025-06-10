@@ -5,7 +5,9 @@ if [ "$1" = "--clean" ]; then
     cargo clean
 fi
 
-if ! command -v sccache >/dev/null 2>&1; then
+if command -v sccache >/dev/null 2>&1; then
+    sccache --start-server >/dev/null 2>&1 || true
+else
     echo "sccache not available, disabling rustc wrapper" >&2
     RUSTC_WRAPPER=""
 fi
