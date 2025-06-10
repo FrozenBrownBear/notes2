@@ -1,7 +1,7 @@
 use std::path::Path;
-use std::time::Duration;
+use std::sync::{Arc, Mutex};
+use std::time::{Duration, Instant};
 use notify::{RecursiveMode, Watcher};
-use notify_debouncer_mini::new_debouncer;
 
 /// Message types emitted on the event bus.
 #[derive(Debug, Clone)]
@@ -18,18 +18,20 @@ pub trait EventBus {
 /// whenever it is modified. Uses a 500ms debounce to coalesce rapid changes.
 pub fn watch_settings<B: EventBus + Send + 'static>(path: &Path, bus: B) -> notify::Result<()> {
     let path = path.to_path_buf();
-    // Create a debouncer with 500ms delay.
-    let mut debouncer = new_debouncer(Duration::from_millis(500), None, move |res| {
-        match res {
-            Ok(_events) => {
+    let last = Arc::new(Mutex::new(Instant::now() - Duration::from_millis(500)));
+    let last_ev = last.clone();
+    let mut watcher = notify::recommended_watcher(move |res| match res {
+        Ok(_e) => {
+            let mut last = last_ev.lock().unwrap();
+            if last.elapsed() >= Duration::from_millis(500) {
                 bus.publish(Message::ReloadSettings);
+                *last = Instant::now();
             }
-            Err(e) => eprintln!("watch error: {e}"),
         }
+        Err(e) => eprintln!("watch error: {e}"),
     })?;
 
-    debouncer.watcher().watch(&path, RecursiveMode::NonRecursive)?;
-    // Keep the debouncer running
-    std::mem::forget(debouncer);
+    watcher.watch(&path, RecursiveMode::NonRecursive)?;
+    std::mem::forget(watcher);
     Ok(())
 }

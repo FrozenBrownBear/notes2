@@ -741,7 +741,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "notify",
- "notify-debouncer-mini",
  "serde",
  "serde_yaml",
  "tempfile",
@@ -2093,6 +2092,8 @@ dependencies = [
 name = "launcher"
 version = "0.1.0"
 dependencies = [
+ "clap",
+ "tui_editor",
  "ui_iced",
 ]
 
@@ -2196,9 +2197,7 @@ name = "markdown_renderer"
 version = "0.1.0"
 dependencies = [
  "pulldown-cmark",
- "regex",
  "tempfile",
- "tokio",
 ]
 
 [[package]]
@@ -2358,7 +2357,7 @@ version = "0.1.0"
 dependencies = [
  "assert_cmd",
  "predicates",
- "regex",
+ "tui_editor",
 ]
 
 [[package]]
@@ -2378,18 +2377,6 @@ dependencies = [
  "notify-types",
  "walkdir",
  "windows-sys 0.59.0",
-]
-
-[[package]]
-name = "notify-debouncer-mini"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a689eb4262184d9a1727f9087cd03883ea716682ab03ed24efec57d7716dccb8"
-dependencies = [
- "log",
- "notify",
- "notify-types",
- "tempfile",
 ]
 
 [[package]]
@@ -3762,20 +3749,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75ef51a33ef1da925cea3e4eb122833cb377c61439ca401b770f54902b806779"
 dependencies = [
  "backtrace",
- "bytes",
  "pin-project-lite",
- "tokio-macros",
-]
-
-[[package]]
-name = "tokio-macros"
-version = "2.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e06d43f1345a3bcd39f6a56dbb7dcab2ba47e68e8ac134855e7e2bdbaf8cab8"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.101",
 ]
 
 [[package]]

@@ -58,6 +58,15 @@ To warm up the build cache locally and fetch all dependencies, run:
 Pass `--clean` to the script if you need a full rebuild. The script also falls back
 to normal `cargo` compilation when `sccache` is not available.
 
+On Windows you can install `sccache` with:
+
+```bash
+cargo install sccache # or scoop install sccache
+```
+
+After installing `sccache`, running `./tools/prepare_build.sh` should reduce
+subsequent compilation times to just a few minutes.
+
 ## Pixel art TUI
 
 The terminal interface renders a small "pixel art" sidebar so that the look and

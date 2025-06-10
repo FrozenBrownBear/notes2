@@ -1,10 +1,8 @@
 use std::path::Path;
-use tokio::fs::File;
-use tokio::io::{AsyncReadExt, AsyncSeekExt};
-use std::io::SeekFrom;
+use std::fs::File;
+use std::io::{Read, Seek, SeekFrom};
 
 use pulldown_cmark::{Parser, Options, Event, Tag, CodeBlockKind};
-use regex::Regex;
 
 #[derive(Debug, Clone)]
 pub enum Widget {
@@ -23,6 +21,30 @@ pub enum Widget {
     CustomImage(String),
 }
 
+fn parse_macro<'a>(text: &'a str, name: &str) -> Option<&'a str> {
+    let trimmed = text.trim();
+    let rest = trimmed.strip_prefix("{%")?.trim_start();
+    let rest = rest.strip_prefix(name)?.trim_start();
+    let arg_end = rest.find("%}")?;
+    let arg = rest[..arg_end].trim();
+    if !arg.is_empty() {
+        Some(arg)
+    } else {
+        None
+    }
+}
+
+fn parse_latex_inline(text: &str) -> Option<String> {
+    if text.starts_with('$') && text.ends_with('$') && text.len() >= 2 {
+        let start = text.chars().take_while(|&c| c == '$').count();
+        let end = text.chars().rev().take_while(|&c| c == '$').count();
+        if start == end && (start == 1 || start == 2) {
+            return Some(text[start..text.len() - end].to_string());
+        }
+    }
+    None
+}
+
 pub fn render_markdown(input: &str) -> Vec<Widget> {
     let parser = Parser::new_ext(input, Options::all());
     let mut iter = parser.peekable();
@@ -33,10 +55,7 @@ fn parse_events<'a, I>(events: &mut std::iter::Peekable<I>) -> Vec<Widget>
 where
     I: Iterator<Item = Event<'a>>,
 {
-    let include_note = Regex::new(r"\{\%\s*include-note\s+([^\s%]+)\s*\%\}").unwrap();
-    let image_macro = Regex::new(r"\{\%\s*image\s+([^\s%]+)\s*\%\}").unwrap();
-    let latex_inline = Regex::new(r"^\${1,2}(.*)\${1,2}$").unwrap();
-
+    
     let mut widgets = Vec::new();
     while let Some(event) = events.next() {
         match event {
@@ -95,12 +114,12 @@ where
             }
             Event::Text(text) => {
                 let t = text.trim();
-                if let Some(cap) = include_note.captures(t) {
-                    widgets.push(Widget::IncludeNote(cap[1].to_string()));
-                } else if let Some(cap) = image_macro.captures(t) {
-                    widgets.push(Widget::CustomImage(cap[1].to_string()));
-                } else if let Some(cap) = latex_inline.captures(t) {
-                    widgets.push(Widget::Latex(cap[1].to_string()));
+                if let Some(arg) = parse_macro(t, "include-note") {
+                    widgets.push(Widget::IncludeNote(arg.to_string()));
+                } else if let Some(arg) = parse_macro(t, "image") {
+                    widgets.push(Widget::CustomImage(arg.to_string()));
+                } else if let Some(latex) = parse_latex_inline(t) {
+                    widgets.push(Widget::Latex(latex));
                 } else {
                     widgets.push(Widget::Text(text.to_string()));
                 }
@@ -144,11 +163,11 @@ where
     collected
 }
 
-pub async fn render_viewport<P: AsRef<Path>>(path: P, start: u64, end: u64) -> std::io::Result<Vec<Widget>> {
-    let mut file = File::open(path).await?;
-    file.seek(SeekFrom::Start(start)).await?;
+pub fn render_viewport<P: AsRef<Path>>(path: P, start: u64, end: u64) -> std::io::Result<Vec<Widget>> {
+    let mut file = File::open(path)?;
+    file.seek(SeekFrom::Start(start))?;
     let mut buf = vec![0u8; (end - start) as usize];
-    file.read_exact(&mut buf).await?;
+    file.read_exact(&mut buf)?;
     let content = String::from_utf8_lossy(&buf);
     Ok(render_markdown(&content))
 }
@@ -157,14 +176,14 @@ pub async fn render_viewport<P: AsRef<Path>>(path: P, start: u64, end: u64) -> s
 mod tests {
     use super::*;
 
-    #[tokio::test]
-    async fn test_viewport() {
+    #[test]
+    fn test_viewport() {
         use std::io::Write;
         let tmp = tempfile::NamedTempFile::new().unwrap();
         let path = tmp.path();
         let mut file = std::fs::File::create(path).unwrap();
         writeln!(file, "# Title\ntext").unwrap();
-        let res = render_viewport(path, 0, 9).await.unwrap();
+        let res = render_viewport(path, 0, 9).unwrap();
         assert!(!res.is_empty());
     }
 }

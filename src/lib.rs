@@ -1,5 +1,3 @@
-use regex::Regex;
-
 #[derive(Debug, PartialEq, Eq)]
 pub enum InteractiveTag {
     Option { key: String, typ: String },
@@ -9,11 +7,22 @@ pub enum InteractiveTag {
 /// Returns `Some(InteractiveTag)` if the input matches the expected
 /// format, otherwise `None`.
 pub fn parse_tag(tag: &str) -> Option<InteractiveTag> {
-    // anchors ensure the entire string is matched
-    let re = Regex::new(r"^/option_([^/_]+)_([^/_]+)/$").unwrap();
-    re.captures(tag).map(|caps| InteractiveTag::Option {
-        key: caps[1].to_string(),
-        typ: caps[2].to_string(),
+    let input = tag.strip_prefix("/option_")?.strip_suffix('/')?;
+    let mut parts = input.splitn(2, '_');
+    let key = parts.next()?;
+    let typ = parts.next()?;
+    if key.is_empty()
+        || typ.is_empty()
+        || key.contains('/')
+        || key.contains('_')
+        || typ.contains('/')
+        || typ.contains('_')
+    {
+        return None;
+    }
+    Some(InteractiveTag::Option {
+        key: key.to_string(),
+        typ: typ.to_string(),
     })
 }
 
