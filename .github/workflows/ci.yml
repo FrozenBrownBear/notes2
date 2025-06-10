@@ -17,10 +17,14 @@ jobs:
         with:
           toolchain: stable
           override: true
-      - name: Install sccache
-        run: cargo install sccache --locked
-      - name: Enable sccache cache
-        run: echo "SCCACHE_GHA_ENABLED=true" >> "$GITHUB_ENV"
+      - name: Setup sccache
+        uses: mozilla-actions/sccache-action@v0.0.3
+        env:
+          RUSTC_WRAPPER: "sccache"
+          SCCACHE_GHA_ENABLED: "true"
+      - name: Precompile crates
+        run: ./tools/prepare_build.sh
+        shell: bash
       - name: Build GUI
         run: cargo build --release -p ui_iced
       - name: Build TUI
