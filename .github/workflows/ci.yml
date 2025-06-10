@@ -17,6 +17,10 @@ jobs:
         with:
           toolchain: stable
           override: true
+      - name: Install sccache
+        run: cargo install sccache --locked
+      - name: Enable sccache cache
+        run: echo "SCCACHE_GHA_ENABLED=true" >> "$GITHUB_ENV"
       - name: Build GUI
         run: cargo build --release -p ui_iced
       - name: Build TUI

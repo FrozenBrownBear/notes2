@@ -33,3 +33,19 @@ cargo run -p ui_iced
 cargo run -p tui_editor
 ```
 
+## Unified launcher
+
+The `launcher` binary lets you select the interface at runtime:
+
+```bash
+cargo run -p launcher -- --mode gui
+cargo run -p launcher -- --mode tui
+```
+
+## Faster builds
+
+The workspace includes a `.cargo/config.toml` that enables the
+[`sccache`](https://github.com/mozilla/sccache) compiler cache and
+incremental release mode. Installing `sccache` can greatly reduce build
+times on repeated compilations.
+
