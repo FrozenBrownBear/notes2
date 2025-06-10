@@ -49,13 +49,14 @@ The workspace includes a `.cargo/config.toml` that enables the
 incremental release mode. Installing `sccache` can greatly reduce build
 times on repeated compilations.
 
-To warm up the build cache locally, you can run:
+To warm up the build cache locally and fetch all dependencies, run:
 
 ```bash
 ./tools/prepare_build.sh
 ```
 
-Pass `--clean` to the script if you need a full rebuild.
+Pass `--clean` to the script if you need a full rebuild. The script also falls back
+to normal `cargo` compilation when `sccache` is not available.
 
 ## Pixel art TUI
 
