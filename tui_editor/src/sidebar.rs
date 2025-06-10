@@ -2,16 +2,21 @@ use std::time::{Duration, Instant};
 
 use crossterm::event::{Event, KeyCode};
 use ratatui::prelude::*;
+use ratatui::text::{Line, Text};
 use ratatui::widgets::{Block, Borders, List, ListItem};
 
 use core_notes::events::{EventSink, Message, SidebarAction};
 
-/// Constant icons used in the sidebar.
-const ICON_SEARCH: &str = "🔍";
-const ICON_BACK: &str = "←";
-const ICON_ADD: &str = "＋";
-const ICON_HOME: &str = "🏠";
-const ICON_SETTINGS: &str = "⚙️";
+/// Pixel art icons used in the sidebar.
+pub const ICON_HOME_ART: &[&str] = &[" /\\ ", "/__\\", "|  |", "|__|"];
+
+pub const ICON_SEARCH_ART: &[&str] = &[" /\\ ", "(  )", " \\/ ", " /  "];
+
+pub const ICON_ADD_ART: &[&str] = &["  +  ", " +++ ", "  +  "];
+
+pub const ICON_SETTINGS_ART: &[&str] = &["[===]", "| o |", "[===]"];
+
+pub const ICON_BACK_ART: &[&str] = &["<--"];
 
 /// Simple trait for a file explorer to allow the sidebar to trigger actions.
 pub trait FileExplorer {
@@ -93,15 +98,20 @@ impl Sidebar {
 
     /// Render the sidebar widget.
     pub fn view(&self) -> List<'static> {
+        fn item(lines: &[&str], label: &str) -> ListItem<'static> {
+            let mut text: Vec<Line<'static>> =
+                lines.iter().map(|&l| Line::from(l.to_string())).collect();
+            text.push(Line::from(label.to_string()));
+            ListItem::new(Text::from(text))
+        }
+
         let items = vec![
-            ListItem::new(format!("{ICON_HOME} home")),
-            ListItem::new(format!("{ICON_SEARCH} search")),
-            ListItem::new(format!("{ICON_ADD} new")),
-            ListItem::new(format!("{ICON_SETTINGS} settings")),
-            ListItem::new(format!("{ICON_BACK} back")),
+            item(ICON_HOME_ART, "home"),
+            item(ICON_SEARCH_ART, "search"),
+            item(ICON_ADD_ART, "new"),
+            item(ICON_SETTINGS_ART, "settings"),
+            item(ICON_BACK_ART, "back"),
         ];
-        List::new(items)
-            .block(Block::default().borders(Borders::ALL).title("Sidebar"))
+        List::new(items).block(Block::default().borders(Borders::ALL).title("Sidebar"))
     }
 }
-
