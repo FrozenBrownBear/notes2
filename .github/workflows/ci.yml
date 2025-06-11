@@ -29,7 +29,7 @@ jobs:
       - name: Build GUI
         run: cargo build --release -p ui_iced
       - name: Build TUI
-        run: cargo build --release -p tui_editor
+        run: cargo build --release -p ui_tui --manifest-path elephant_notes/Cargo.toml
       - name: Run tests
         run: cargo test --workspace
       - name: Upload Artifacts
@@ -38,5 +38,5 @@ jobs:
           name: notes2-${{ matrix.os }}
           path: |
             target/release/ui_iced*
-            target/release/tui_editor*
+            target/release/ui_tui*
 

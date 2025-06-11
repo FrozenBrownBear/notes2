@@ -1,0 +1,12 @@
+[package]
+name = "ui_tui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+markdown_renderer = { path = "../markdown_renderer" }
+interactive_widgets = { path = "../interactive_widgets" }
+core = { path = "../core" }
+config = { path = "../config" }
