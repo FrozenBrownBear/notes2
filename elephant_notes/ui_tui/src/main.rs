@@ -1,8 +1,26 @@
 use std::io;
+use std::path::PathBuf;
 use crossterm::{execute, terminal::{EnterAlternateScreen, LeaveAlternateScreen, enable_raw_mode, disable_raw_mode}, event::{self, Event, KeyCode}};
+use clap::Parser;
 use ratatui::{Terminal, prelude::*, widgets::{Block, Borders}};
 
+#[derive(Parser)]
+struct Args {
+    /// Directory where notes are stored
+    #[arg(long)]
+    origin: Option<PathBuf>,
+}
+
 fn main() -> std::io::Result<()> {
+    let args = Args::parse();
+    let origin = args
+        .origin
+        .or_else(|| std::env::var_os("ELEPHANT_NOTES_ORIGIN").map(PathBuf::from))
+        .expect("--origin or ELEPHANT_NOTES_ORIGIN required");
+    std::fs::create_dir_all(&origin)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+    println!("Using notes directory: {}", origin.display());
+
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen)?;
