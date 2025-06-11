@@ -24,14 +24,20 @@ cargo build --workspace
 ## Running the GUI
 
 ```bash
-cargo run -p ui_iced
+cargo run -p ui_iced -- --origin /path/to/notes
 ```
 
 ## Running the TUI
 
 ```bash
-cargo run -p tui_editor
+cargo run -p tui_editor -- --origin /path/to/notes
 ```
+
+## Notes origin directory
+
+Both interfaces require a folder where notes are stored. Provide it with
+the `--origin` argument or set the `ELEPHANT_NOTES_ORIGIN` environment variable.
+The folder will be created automatically if it does not exist.
 
 ## Unified launcher
 
@@ -73,7 +79,7 @@ The terminal interface renders a small "pixel art" sidebar so that the look and
 feel matches the graphical application. Run it with:
 
 ```bash
-cargo run -p tui_editor
+cargo run -p tui_editor -- --origin /path/to/notes
 ```
 
 ## Pre-commit procedure

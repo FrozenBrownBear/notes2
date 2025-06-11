@@ -10,3 +10,4 @@ markdown_renderer = { path = "../markdown_renderer" }
 interactive_widgets = { path = "../interactive_widgets" }
 core = { path = "../core" }
 config = { path = "../config" }
+clap = { version = "4", features = ["derive"] }

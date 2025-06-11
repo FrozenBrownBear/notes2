@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 iced = { workspace = true }
 core = { path = "../core" }
+clap = { version = "4", features = ["derive"] }
