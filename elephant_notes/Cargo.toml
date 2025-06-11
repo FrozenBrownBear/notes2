@@ -1,0 +1,23 @@
+[workspace]
+resolver = "2"
+members = [
+    "core",
+    "config",
+    "storage",
+    "markdown_renderer",
+    "interactive_widgets",
+    "ui_tui",
+    "ui_iced",
+    "tools/create_note"
+]
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+yaml-front-matter = "0.1"
+notify = "6"
+pulldown-cmark = "0.9"
+ratatui = "0.26"
+crossterm = "0.27"
+iced = { version = "0.10", features = ["tokio"] }
+anyhow = "1"
